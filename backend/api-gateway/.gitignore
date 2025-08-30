@@ -1,3 +1,41 @@
+## Generic
+*~
+*.lock
+*.DS_Store
+*.swp
+*.out
+*.tmp
+*.bak
+*.old
+*.orig
+*.rej
+*.pid
+*.gz
+*.log
+*.log.*
+hs_err_pid*
+
+## Scala / SBT / Play / Scalatra
+target/
+project/boot/
+project/build/target/
+project/build/lib_managed/
+project/build/src_managed/
+project/plugins/lib_managed/
+project/plugins/target/
+project/plugins/src_managed/
+project/plugins/project/
+lib_managed/
+src_managed/
+.bsp/
+.metals/
+.bloop/
+metals.sbt
+
+## Akka / Play logs
+logs/
+log/
+*.log
 target/logs/
 
 ## Test & Coverage
