@@ -1,0 +1,46 @@
+target/logs/
+
+## Test & Coverage
+/test-output/
+/coverage/
+/jacoco.exec
+/target/test-reports/
+
+## IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+*.eml
+*.sublime-*
+*.vscode/
+*.launch
+*.settings/
+*.classpath
+*.project
+*.factorypath
+.ensime*
+.cache
+
+## Eclipse
+.metadata
+jrebel.lic
+
+## Xcode / iOS
+build/
+*.pbxuser
+*.mode2v3
+*.mode1v3
+*.perspective*
+*~.nib
+
+## Docker / Terraform
+docker-compose.override.yml
+*.tfstate
+*.tfstate.*
+.terraform/
+
+## Rails (if legacy present)
+*.sqlite3
+config/database.yml
+tmp/
