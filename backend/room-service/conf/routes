@@ -17,3 +17,6 @@ DELETE    /api/rooms/:id    com.radovan.play.controllers.RoomController.deleteRo
 #Health
 GET     /api/health     com.radovan.play.controllers.HealthController.healthCheck
 
+#metrics
+GET  /prometheus   com.radovan.play.controllers.PrometheusController.getMetrics
+

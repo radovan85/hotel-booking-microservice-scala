@@ -1,4 +1,4 @@
-package com.radovan.play.repositories.impl
+package com.radovan.play.services.impl
 
 import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
 import com.radovan.play.services.MoleculerServiceDiscovery
@@ -13,7 +13,7 @@ class MoleculerServiceDiscoveryImpl @Inject() (
                                              objectMapper: ObjectMapper
                                            ) extends MoleculerServiceDiscovery {
 
-  private val MOLECULER_DISCOVERY_URL = "http://localhost:3000/services"
+  private val MOLECULER_DISCOVERY_URL = "http://localhost:3400/services"
 
 
   override def getServiceUrl(serviceName: String): String = {

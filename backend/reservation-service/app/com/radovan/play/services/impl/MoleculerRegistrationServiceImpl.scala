@@ -1,4 +1,4 @@
-package com.radovan.play.repositories.impl
+package com.radovan.play.services.impl
 
 import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
 import com.radovan.play.services.MoleculerRegistrationService
@@ -21,7 +21,7 @@ class MoleculerRegistrationServiceImpl @Inject() (
                                                  ) extends MoleculerRegistrationService {
 
 
-  private val moleculerRegistryUrl = "http://localhost:3000/register"
+  private val moleculerRegistryUrl = "http://localhost:3400/register"
   private val appName = "reservation-service"
   private val port = 9002
 

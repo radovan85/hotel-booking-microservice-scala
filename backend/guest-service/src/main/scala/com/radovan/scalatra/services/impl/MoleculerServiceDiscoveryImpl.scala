@@ -14,7 +14,7 @@ class MoleculerServiceDiscoveryImpl @Inject() () extends MoleculerServiceDiscove
 
   private val client = HttpClients.createDefault()
 
-  private val MOLECULER_DISCOVERY_URL = "http://localhost:3000/services"
+  private val MOLECULER_DISCOVERY_URL = "http://localhost:3400/services"
 
   override def getServiceUrl(serviceName: String): String = {
     val request = new HttpGet(MOLECULER_DISCOVERY_URL)

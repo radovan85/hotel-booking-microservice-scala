@@ -1,7 +1,7 @@
 package com.radovan.scalatra.config
 
 import com.google.inject.{Guice, Injector}
-import com.radovan.scalatra.controllers.{GuestController, HealthController}
+import com.radovan.scalatra.controllers.{GuestController, HealthController, PrometheusController}
 import com.radovan.scalatra.modules.{AutoBindModule, HibernateModule, MapperModule}
 import com.radovan.scalatra.services.MoleculerRegistrationService
 import org.eclipse.jetty.ee10.servlet.{ServletContextHandler, ServletHolder}
@@ -33,10 +33,12 @@ object JettyLauncher {
       // Dohvati kontrolere iz Guice injector-a
       val guestController = injector.getInstance(classOf[GuestController])
       val healthController = injector.getInstance(classOf[HealthController])
+      val prometheusController = injector.getInstance(classOf[PrometheusController])
 
       // Dodaj kontrolere kao servlet-e na odgovarajuće rute
       context.addServlet(new ServletHolder("guestController", guestController), "/api/guests/*")
       context.addServlet(new ServletHolder("healthController", healthController), "/api/health/*")
+      context.addServlet(new ServletHolder("prometheusController", prometheusController), "/prometheus/*")
 
       println("✅ Server started at http://localhost:8083")
       println("✅ Health check: http://localhost:8083/api/health")

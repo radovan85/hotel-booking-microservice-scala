@@ -5,9 +5,11 @@ import com.radovan.play.brokers.{RoomNatsListener, RoomNatsSender}
 import com.radovan.play.converter.TempConverter
 import com.radovan.play.repositories.{RoomCategoryRepository, RoomRepository}
 import com.radovan.play.repositories.impl.{RoomCategoryRepositoryImpl, RoomRepositoryImpl}
-import com.radovan.play.services.{MoleculerRegistrationService, MoleculerServiceDiscovery, RoomCategoryService, RoomService}
-import com.radovan.play.services.impl.{MoleculerRegistrationServiceImpl, MoleculerServiceDiscoveryImpl, RoomCategoryServiceImpl, RoomServiceImpl}
+import com.radovan.play.services.{MoleculerRegistrationService, MoleculerServiceDiscovery, PrometheusService, RoomCategoryService, RoomService}
+import com.radovan.play.services.impl.{MoleculerRegistrationServiceImpl, MoleculerServiceDiscoveryImpl, PrometheusServiceImpl, RoomCategoryServiceImpl, RoomServiceImpl}
 import com.radovan.play.utils.{JwtUtil, NatsUtils, PublicKeyCache, ServiceUrlProvider}
+import io.micrometer.core.instrument.MeterRegistry
+import io.micrometer.prometheusmetrics.{PrometheusConfig, PrometheusMeterRegistry}
 
 
 class AutoBindModule extends AbstractModule {
@@ -17,6 +19,7 @@ class AutoBindModule extends AbstractModule {
     bind(classOf[RoomCategoryService]).to(classOf[RoomCategoryServiceImpl]).asEagerSingleton()
     bind(classOf[MoleculerRegistrationService]).to(classOf[MoleculerRegistrationServiceImpl]).asEagerSingleton()
     bind(classOf[MoleculerServiceDiscovery]).to(classOf[MoleculerServiceDiscoveryImpl]).asEagerSingleton()
+    bind(classOf[PrometheusService]).to(classOf[PrometheusServiceImpl]).asEagerSingleton()
     bind(classOf[RoomRepository]).to(classOf[RoomRepositoryImpl]).asEagerSingleton()
     bind(classOf[RoomCategoryRepository]).to(classOf[RoomCategoryRepositoryImpl]).asEagerSingleton()
     bind(classOf[TempConverter]).asEagerSingleton()
@@ -27,6 +30,8 @@ class AutoBindModule extends AbstractModule {
     bind(classOf[RoomNatsListener]).asEagerSingleton()
     bind(classOf[RoomNatsSender]).asEagerSingleton()
 
-
+    val prometheusRegistry = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
+    bind(classOf[PrometheusMeterRegistry]).toInstance(prometheusRegistry)
+    bind(classOf[MeterRegistry]).toInstance(prometheusRegistry)
   }
 }

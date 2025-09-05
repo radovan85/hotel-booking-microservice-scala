@@ -22,6 +22,6 @@ app.get("/services", async (req, res) => {
   res.json(result);
 });
 
-app.listen(3000, () => {
-  console.log("Registry server listening on port 3000");
+app.listen(3400, () => {
+  console.log("Registry server listening on port 3400");
 });

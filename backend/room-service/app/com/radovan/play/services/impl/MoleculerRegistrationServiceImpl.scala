@@ -21,7 +21,7 @@ class MoleculerRegistrationServiceImpl @Inject() (
                                                  ) extends MoleculerRegistrationService {
 
 
-  private val moleculerRegistryUrl = "http://localhost:3000/register"
+  private val moleculerRegistryUrl = "http://localhost:3400/register"
   private val appName = "room-service"
   private val port = 9001
 

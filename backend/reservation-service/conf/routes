@@ -21,3 +21,6 @@ DELETE   /api/notes/:id    com.radovan.play.controllers.NoteController.deleteNot
 
 #Health
 GET     /api/health     com.radovan.play.controllers.HealthController.healthCheck
+
+#metrics
+GET  /prometheus   com.radovan.play.controllers.PrometheusController.getMetrics

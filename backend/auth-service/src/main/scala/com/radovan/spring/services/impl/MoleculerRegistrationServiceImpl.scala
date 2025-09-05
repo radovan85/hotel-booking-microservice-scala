@@ -2,7 +2,6 @@ package com.radovan.spring.services.impl
 
 import com.radovan.spring.services.MoleculerRegistrationService
 import jakarta.annotation.PostConstruct
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.{HttpEntity, HttpHeaders, MediaType}
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
@@ -18,10 +17,7 @@ class MoleculerRegistrationServiceImpl extends MoleculerRegistrationService {
 
   private val restTemplate = new RestTemplate()
 
-  @Value("${moleculer.registry.url:http://localhost:3000/register}")
-  private val registryUrl: String = null
-
-  @Value("${server.port:8081}")
+  private val moleculerRegistryUrl = "http://localhost:3400/register"
   private val port: Int = 8081
 
   private val appName = "auth-service"
@@ -54,10 +50,10 @@ class MoleculerRegistrationServiceImpl extends MoleculerRegistrationService {
       // ✅ Konvertuj registrationData u Java Map pre slanja
       val request = new HttpEntity[JMap[String, Any]](registrationData.asJava, headers)
 
-      val response = restTemplate.postForEntity(registryUrl, request, classOf[String])
+      val response = restTemplate.postForEntity(moleculerRegistryUrl, request, classOf[String])
 
       if (response.getStatusCode.is2xxSuccessful) {
-        println(s"✅ Moleculer registration successful at $registryUrl")
+        println(s"✅ Moleculer registration successful at $moleculerRegistryUrl")
       } else {
         println(s"❌ Moleculer registration failed. Status: ${response.getStatusCode}")
       }

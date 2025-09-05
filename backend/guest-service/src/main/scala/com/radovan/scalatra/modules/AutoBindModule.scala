@@ -5,9 +5,11 @@ import com.radovan.scalatra.brokers.{GuestNatsListener, GuestNatsSender}
 import com.radovan.scalatra.converter.TempConverter
 import com.radovan.scalatra.repositories.GuestRepository
 import com.radovan.scalatra.repositories.impl.GuestRepositoryImpl
-import com.radovan.scalatra.services.{GuestService, MoleculerRegistrationService, MoleculerServiceDiscovery}
-import com.radovan.scalatra.services.impl.{GuestServiceImpl, MoleculerRegistrationServiceImpl, MoleculerServiceDiscoveryImpl}
+import com.radovan.scalatra.services.{GuestService, MoleculerRegistrationService, MoleculerServiceDiscovery, PrometheusService}
+import com.radovan.scalatra.services.impl.{GuestServiceImpl, MoleculerRegistrationServiceImpl, MoleculerServiceDiscoveryImpl, PrometheusServiceImpl}
 import com.radovan.scalatra.utils.{JwtUtil, NatsUtils, PublicKeyCache, ServiceUrlProvider}
+import io.micrometer.core.instrument.MeterRegistry
+import io.micrometer.prometheusmetrics.{PrometheusConfig, PrometheusMeterRegistry}
 import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.stream.Materializer
 
@@ -30,6 +32,7 @@ class AutoBindModule extends AbstractModule {
     bind(classOf[MoleculerRegistrationService]).to(classOf[MoleculerRegistrationServiceImpl]).asEagerSingleton()
     bind(classOf[MoleculerServiceDiscovery]).to(classOf[MoleculerServiceDiscoveryImpl]).asEagerSingleton()
     bind(classOf[GuestService]).to(classOf[GuestServiceImpl]).asEagerSingleton()
+    bind(classOf[PrometheusService]).to(classOf[PrometheusServiceImpl]).asEagerSingleton()
     bind(classOf[GuestRepository]).to(classOf[GuestRepositoryImpl]).asEagerSingleton()
     bind(classOf[ServiceUrlProvider]).asEagerSingleton()
     bind(classOf[TempConverter]).asEagerSingleton()
@@ -39,5 +42,8 @@ class AutoBindModule extends AbstractModule {
     bind(classOf[GuestNatsSender]).asEagerSingleton()
     bind(classOf[GuestNatsListener]).asEagerSingleton()
 
+    val prometheusRegistry = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
+    bind(classOf[PrometheusMeterRegistry]).toInstance(prometheusRegistry)
+    bind(classOf[MeterRegistry]).toInstance(prometheusRegistry)
   }
 }
