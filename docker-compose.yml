@@ -1,0 +1,243 @@
+version: "3.8"
+
+services:
+  registry-service:
+    container_name: registry-service
+    build:
+      context: ./backend/moleculer-server
+      dockerfile: Dockerfile
+    ports:
+      - "3400:3400"
+    environment:
+      NODE_ENV: production
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3400/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - moleculer-net
+      - hotel-network
+
+  mariadb:
+    image: mariadb:11
+    container_name: hotel_mariadb
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 1111
+      MYSQL_DATABASE: hotel-db
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - hotel-network
+    healthcheck:
+      test: ["CMD-SHELL", "mariadb -uadmin -padmin hotel-db -Bse 'SELECT 1;' || exit 1"]
+      start_period: 45s
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  adminer:
+    image: adminer
+    ports:
+      - "8082:8080"
+    networks:
+      - hotel-network
+    depends_on:
+      - mariadb
+    restart: unless-stopped
+
+  nats:
+    image: nats:latest
+    container_name: nats
+    ports:
+      - "4222:4222"
+    networks:
+      - hotel-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "nats-server", "-sl"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - "9090:9090"
+    networks:
+      - hotel-network
+      - monitoring
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    ports:
+      - "3002:3000"
+    networks:
+      - hotel-network
+      - monitoring
+    restart: unless-stopped
+
+  api-gateway:
+    build:
+      context: ./backend/api-gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    ports:
+      - "8090:8090"
+    environment:
+      APP_NAME: api-gateway
+      REGISTRY_URL: http://registry-service:3400/services
+      JAVA_OPTS: -Xms256m -Xmx512m
+    depends_on:
+      registry-service:
+        condition: service_healthy
+    networks:
+      - hotel-network
+
+  auth-service:
+    build:
+      context: ./backend/auth-service
+      dockerfile: Dockerfile
+    container_name: auth-service
+    ports:
+      - "8081:8080"
+    environment:
+      DB_URL: jdbc:mariadb://mariadb:3306/hotel-db
+      DB_USERNAME: admin
+      DB_PASSWORD: admin
+      SPRING_APPLICATION_NAME: auth-service
+      REGISTRY_URL: http://registry-service:3400/services
+      NATS_URL: nats://nats:4222
+      JAVA_OPTS: -Xms256m -Xmx512m
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      registry-service:
+        condition: service_healthy
+      nats:
+        condition: service_started
+    networks:
+      - hotel-network
+    restart: unless-stopped
+
+  guest-service:
+    build:
+      context: ./backend/guest-service
+      dockerfile: Dockerfile
+    container_name: guest-service
+    ports:
+      - "8083:8083"
+    environment:
+      DB_URL: jdbc:mariadb://mariadb:3306/hotel-db
+      DB_USERNAME: admin
+      DB_PASSWORD: admin
+      NATS_URL: nats://nats:4222
+      SERVICE_NAME: guest-service
+      REGISTRY_URL: http://registry-service:3400/services
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      nats:
+        condition: service_started
+      registry-service:
+        condition: service_healthy
+    networks:
+      - hotel-network
+    restart: unless-stopped
+
+  room-service:
+    build:
+      context: ./backend/room-service
+      dockerfile: Dockerfile
+    container_name: room-service
+    ports:
+      - "9001:9000"
+    environment:
+      DB_URL: jdbc:mariadb://mariadb:3306/hotel-db
+      DB_USERNAME: admin
+      DB_PASSWORD: admin
+      NATS_URL: nats://nats:4222
+      SERVICE_NAME: room-service
+      REGISTRY_URL: http://registry-service:3400/services
+      PLAY_SECRET: M^;pDYFx;/:YR4z<@t<=eI8a<Pk<FDeciChApqC:5PVk8g_c_v5ppe7?:Wb_tBNE
+      PLAY_SERVER_HTTP_PORT: 9000
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      nats:
+        condition: service_started
+      registry-service:
+        condition: service_healthy
+    networks:
+      - hotel-network
+    restart: unless-stopped
+
+  reservation-service:
+    build:
+      context: ./backend/reservation-service
+      dockerfile: Dockerfile
+    container_name: reservation-service
+    ports:
+      - "9002:9000"
+    environment:
+      DB_URL: jdbc:mariadb://mariadb:3306/hotel-db
+      DB_USERNAME: admin
+      DB_PASSWORD: admin
+      NATS_URL: nats://nats:4222
+      SERVICE_NAME: reservation-service
+      REGISTRY_URL: http://registry-service:3400/services
+      PLAY_SECRET: ^VtSg88xeAxz<O5c01/?A>^>kd>1<6rgCX@;DCjJcPiTrEN6<IcJv11RxCs8hp<y
+      PLAY_SERVER_HTTP_PORT: 9000
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      nats:
+        condition: service_started
+      registry-service:
+        condition: service_healthy
+    networks:
+      - hotel-network
+    restart: unless-stopped
+
+  vue-frontend:
+    build:
+      context: ./vue-frontend
+      dockerfile: Dockerfile
+    container_name: vue-frontend
+    ports:
+      - "3000:80"
+    networks:
+      - hotel-network
+    depends_on:
+      - api-gateway
+    restart: unless-stopped
+
+networks:
+  moleculer-net:
+    driver: bridge
+  hotel-network:
+    driver: bridge
+  monitoring:
+    driver: bridge
+
+volumes:
+  mariadb_data:
+  grafana-storage:
