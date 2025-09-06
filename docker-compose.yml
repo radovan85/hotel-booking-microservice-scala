@@ -3,9 +3,7 @@ version: "3.8"
 services:
   registry-service:
     container_name: registry-service
-    build:
-      context: ./backend/moleculer-server
-      dockerfile: Dockerfile
+    image: ghcr.io/radovan85/hotel-scl/registry-service:main
     ports:
       - "3400:3400"
     environment:
@@ -96,9 +94,7 @@ services:
     restart: unless-stopped
 
   api-gateway:
-    build:
-      context: ./backend/api-gateway
-      dockerfile: Dockerfile
+    image: ghcr.io/radovan85/hotel-scl/api-gateway:main
     container_name: api-gateway
     ports:
       - "8090:8090"
@@ -113,9 +109,7 @@ services:
       - hotel-network
 
   auth-service:
-    build:
-      context: ./backend/auth-service
-      dockerfile: Dockerfile
+    image: ghcr.io/radovan85/hotel-scl/auth-service:main
     container_name: auth-service
     ports:
       - "8081:8080"
@@ -139,9 +133,7 @@ services:
     restart: unless-stopped
 
   guest-service:
-    build:
-      context: ./backend/guest-service
-      dockerfile: Dockerfile
+    image: ghcr.io/radovan85/hotel-scl/guest-service:main
     container_name: guest-service
     ports:
       - "8083:8083"
@@ -164,9 +156,7 @@ services:
     restart: unless-stopped
 
   room-service:
-    build:
-      context: ./backend/room-service
-      dockerfile: Dockerfile
+    image: ghcr.io/radovan85/hotel-scl/room-service:main
     container_name: room-service
     ports:
       - "9001:9000"
@@ -191,9 +181,7 @@ services:
     restart: unless-stopped
 
   reservation-service:
-    build:
-      context: ./backend/reservation-service
-      dockerfile: Dockerfile
+    image: ghcr.io/radovan85/hotel-scl/reservation-service:main
     container_name: reservation-service
     ports:
       - "9002:9000"
@@ -218,9 +206,7 @@ services:
     restart: unless-stopped
 
   vue-frontend:
-    build:
-      context: ./vue-frontend
-      dockerfile: Dockerfile
+    image: ghcr.io/radovan85/hotel-scl/vue-frontend:main
     container_name: vue-frontend
     ports:
       - "3000:80"
