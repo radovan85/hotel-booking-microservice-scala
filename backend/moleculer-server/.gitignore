@@ -51,7 +51,6 @@ test-output/
 Thumbs.db
 
 # Optional lockfiles
-package-lock.json
 yarn.lock
 pnpm-lock.yaml
 
