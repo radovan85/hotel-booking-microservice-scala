@@ -43,7 +43,7 @@ jobs:
 
       - name: Build Registry service
         run: |
-          cd registry-service
+          cd backend/moleculer-server
           npm ci --omit=dev
           npm run build || echo "No build script defined, skipping..."
           cd ..
