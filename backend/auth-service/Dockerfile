@@ -4,6 +4,8 @@ WORKDIR /app
 
 COPY target/auth-service.war /app/app.war
 
+RUN sed -i 's/port="8080"/port="8081"/' /usr/local/tomcat/conf/server.xml
+
 RUN mv /app/app.war /usr/local/tomcat/webapps/ROOT.war
 
 ENV DB_URL=${DB_URL}
