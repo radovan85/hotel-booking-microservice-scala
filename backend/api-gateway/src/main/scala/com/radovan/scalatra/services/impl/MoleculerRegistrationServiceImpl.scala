@@ -21,7 +21,7 @@ class MoleculerRegistrationServiceImpl @Inject() (
 
   implicit val ec: ExecutionContext = system.dispatcher
 
-  private val moleculerRegistryUrl = "http://registry-service:3400/register"
+  private val moleculerRegistryUrl = "http://localhost:3400/register"
   private val appName = "api-gateway"
   private val port = 8090
 

@@ -13,7 +13,7 @@ class MoleculerServiceDiscoveryImpl @Inject() (
                                              objectMapper: ObjectMapper
                                            ) extends MoleculerServiceDiscovery {
 
-  private val MOLECULER_DISCOVERY_URL = "http://registry-service:3400/services"
+  private val MOLECULER_DISCOVERY_URL = "http://localhost:3400/services"
 
 
   override def getServiceUrl(serviceName: String): String = {

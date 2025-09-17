@@ -21,9 +21,9 @@ class MoleculerRegistrationServiceImpl @Inject() (
                                                  ) extends MoleculerRegistrationService {
 
 
-  private val moleculerRegistryUrl = "http://registry-service:3400/register"
+  private val moleculerRegistryUrl = "http://localhost:3400/register"
   private val appName = "reservation-service"
-  private val port = 9000
+  private val port = System.getenv("PLAY_PORT").toInt
 
   actorSystem.scheduler.scheduleAtFixedRate(
     initialDelay = 0.seconds,

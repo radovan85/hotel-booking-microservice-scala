@@ -17,8 +17,8 @@ class MoleculerRegistrationServiceImpl extends MoleculerRegistrationService {
 
   private val restTemplate = new RestTemplate()
 
-  private val moleculerRegistryUrl = "http://registry-service:3400/register"
-  private val port: Int = 8080
+  private val moleculerRegistryUrl = "http://localhost:3400/register"
+  private val port: Int = 8081
 
   private val appName = "auth-service"
 
